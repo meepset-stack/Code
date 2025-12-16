@@ -1,3 +1,4 @@
+return {
 ["rbxassetid://139461105225005"] = "Wild Hunter",
 ["rbxassetid://122478286818819"] = "Green Bomber",
 ["rbxassetid://136722435303247"] = "Golden King",
@@ -314,3 +315,4 @@
 ["rbxassetid://86382153773565"] = "Assassin Star Prodigy",
 ["rbxassetid://113039236698274"] = "Princess Of Light",
 ["rbxassetid://136709390364745"] = "Substitute Shinigami",
+}
