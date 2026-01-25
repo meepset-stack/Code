@@ -1,4 +1,7 @@
 return {
+    ["rbxassetid://113920321791483"] = "Damage Style",
+    ["rbxassetid://121547703452967"] = "Sustain Style",
+    ["rbxassetid://101524853609494"] = "Balance Style",
     ["rbxassetid://122478286818819"] = "Green Bomber",
     ["rbxassetid://139461105225005"] = "Wild Hunter",
     ["rbxassetid://128479859068669"] = "Science King",
