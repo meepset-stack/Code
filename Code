@@ -1,4 +1,7 @@
 return {
+    ["rbxassetid://113920321791483"] = "Damage Style",
+    ["rbxassetid://121547703452967"] = "Sustain Style",
+    ["rbxassetid://101524853609494"] = "Balance Style",
     ["rbxassetid://89927256292811"] = "Deranged Curse",
     ["rbxassetid://116136902442728"] = "Titania",
     ["rbxassetid://131615209596102"] = "Unstoppable Fist",
