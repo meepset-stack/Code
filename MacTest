@@ -1933,12 +1933,30 @@ function MacLib:Window(Settings)
 			elementsScrollingUIPadding.PaddingTop = UDim.new(0, 5)
 			elementsScrollingUIPadding.Parent = elementsScrolling
 
+			-- Vertical layout for the scroll: columnsRow + full-width rows stack vertically
 			local elementsScrollingUIListLayout = Instance.new("UIListLayout")
 			elementsScrollingUIListLayout.Name = "ElementsScrollingUIListLayout"
 			elementsScrollingUIListLayout.Padding = UDim.new(0, 15)
-			elementsScrollingUIListLayout.FillDirection = Enum.FillDirection.Horizontal
+			elementsScrollingUIListLayout.FillDirection = Enum.FillDirection.Vertical
 			elementsScrollingUIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 			elementsScrollingUIListLayout.Parent = elementsScrolling
+
+			-- columnsRow holds Left + Right side by side
+			local columnsRow = Instance.new("Frame")
+			columnsRow.Name = "ColumnsRow"
+			columnsRow.AutomaticSize = Enum.AutomaticSize.Y
+			columnsRow.BackgroundTransparency = 1
+			columnsRow.BorderSizePixel = 0
+			columnsRow.Size = UDim2.new(1, 0, 0, 0)
+			columnsRow.LayoutOrder = 0
+
+			local columnsRowLayout = Instance.new("UIListLayout")
+			columnsRowLayout.FillDirection = Enum.FillDirection.Horizontal
+			columnsRowLayout.Padding = UDim.new(0, 15)
+			columnsRowLayout.SortOrder = Enum.SortOrder.LayoutOrder
+			columnsRowLayout.Parent = columnsRow
+
+			columnsRow.Parent = elementsScrolling
 
 			local left = Instance.new("Frame")
 			left.Name = "Left"
@@ -1947,7 +1965,7 @@ function MacLib:Window(Settings)
 			left.BackgroundTransparency = 1
 			left.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			left.BorderSizePixel = 0
-			left.Position = UDim2.fromScale(0.512, 0)
+			left.LayoutOrder = 0
 			left.Size = UDim2.new(0.5, -10, 0, 0)
 
 			local leftUIListLayout = Instance.new("UIListLayout")
@@ -1956,7 +1974,7 @@ function MacLib:Window(Settings)
 			leftUIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 			leftUIListLayout.Parent = left
 
-			left.Parent = elementsScrolling
+			left.Parent = columnsRow
 
 			local right = Instance.new("Frame")
 			right.Name = "Right"
@@ -1966,7 +1984,6 @@ function MacLib:Window(Settings)
 			right.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			right.BorderSizePixel = 0
 			right.LayoutOrder = 1
-			right.Position = UDim2.fromScale(0.512, 0)
 			right.Size = UDim2.new(0.5, -10, 0, 0)
 
 			local rightUIListLayout = Instance.new("UIListLayout")
@@ -1975,7 +1992,10 @@ function MacLib:Window(Settings)
 			rightUIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 			rightUIListLayout.Parent = right
 
-			right.Parent = elementsScrolling
+			right.Parent = columnsRow
+
+			-- Track layout order for full-width rows
+			local fullRowCount = 1
 
 			elementsScrolling.Parent = elements1
 
@@ -1992,19 +2012,21 @@ function MacLib:Window(Settings)
 				section.Size = UDim2.fromScale(1, 0)
 				section.ClipsDescendants = true
 				if Settings.Side == "Full" then
-					local fullWrapper = Instance.new("Frame")
-					fullWrapper.Name = "FullWrapper"
-					fullWrapper.AutomaticSize = Enum.AutomaticSize.Y
-					fullWrapper.BackgroundTransparency = 1
-					fullWrapper.BorderSizePixel = 0
-					fullWrapper.Size = UDim2.new(1, 0, 0, 0)
-					fullWrapper.LayoutOrder = #elementsScrolling:GetChildren()
-					local fullWrapperList = Instance.new("UIListLayout")
-					fullWrapperList.Padding = UDim.new(0, 0)
-					fullWrapperList.SortOrder = Enum.SortOrder.LayoutOrder
-					fullWrapperList.Parent = fullWrapper
-					fullWrapper.Parent = elementsScrolling
-					section.Parent = fullWrapper
+					-- Full-width row: sits in the vertical elementsScrolling flow
+					local fullRow = Instance.new("Frame")
+					fullRow.Name = "FullRow"
+					fullRow.AutomaticSize = Enum.AutomaticSize.Y
+					fullRow.BackgroundTransparency = 1
+					fullRow.BorderSizePixel = 0
+					fullRow.Size = UDim2.new(1, 0, 0, 0)
+					fullRow.LayoutOrder = fullRowCount
+					fullRowCount = fullRowCount + 1
+					local fullRowList = Instance.new("UIListLayout")
+					fullRowList.Padding = UDim.new(0, 0)
+					fullRowList.SortOrder = Enum.SortOrder.LayoutOrder
+					fullRowList.Parent = fullRow
+					fullRow.Parent = elementsScrolling
+					section.Parent = fullRow
 				else
 					section.Parent = Settings.Side == "Left" and left or right
 				end
