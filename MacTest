@@ -350,7 +350,7 @@ function MacLib:Window(Settings)
 	local base = Instance.new("Frame")
 	base.Name = "Base"
 	base.AnchorPoint = Vector2.new(0.5, 0.5)
-	base.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+	base.BackgroundColor3 = Color3.fromRGB(8, 8, 8)
 	base.BackgroundTransparency = Settings.AcrylicBlur and 0.05 or 0
 	base.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	base.BorderSizePixel = 0
@@ -1100,7 +1100,7 @@ function MacLib:Window(Settings)
 	local globalSettings = Instance.new("Frame")
 	globalSettings.Name = "GlobalSettings"
 	globalSettings.AutomaticSize = Enum.AutomaticSize.XY
-	globalSettings.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+	globalSettings.BackgroundColor3 = Color3.fromRGB(8, 8, 8)
 	globalSettings.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	globalSettings.BorderSizePixel = 0
 	globalSettings.Position = UDim2.fromScale(0.298, 0.104)
@@ -3877,7 +3877,7 @@ function MacLib:Window(Settings)
 					prompt.Name = "Prompt"
 					prompt.AnchorPoint = Vector2.new(0.5, 0.5)
 					prompt.AutomaticSize = Enum.AutomaticSize.Y
-					prompt.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+					prompt.BackgroundColor3 = Color3.fromRGB(8, 8, 8)
 					prompt.BorderColor3 = Color3.fromRGB(0, 0, 0)
 					prompt.BorderSizePixel = 0
 					prompt.Position = UDim2.fromScale(0.5, 0.5)
@@ -5714,22 +5714,22 @@ function MacLib:Window(Settings)
 
 				for i, tabInfo in pairs(tabs) do
 					Tween(i, TweenInfo.new(easetime, Enum.EasingStyle.Sine), {
-						BackgroundTransparency = (i == tabSwitcher and 0.98 or 1)
+						BackgroundTransparency = (i == tabSwitcher and 0.9 or 1)
 					}):Play()
 
 					if tabInfo.tabStroke then
 						Tween(tabInfo.tabStroke, TweenInfo.new(easetime, Enum.EasingStyle.Sine), {
-							Transparency = (i == tabSwitcher and 0.95 or 1)
+							Transparency = (i == tabSwitcher and 0.85 or 1)
 						}):Play()
 					end
 					if tabInfo.switcherImage then
 						Tween(tabInfo.switcherImage, TweenInfo.new(easetime, Enum.EasingStyle.Sine), {
-							ImageTransparency = (i == tabSwitcher and 0.1 or 0.5)
+							ImageTransparency = (i == tabSwitcher and 0 or 0.35)
 						}):Play()
 					end
 					if tabInfo.switcherName then
 						Tween(tabInfo.switcherName, TweenInfo.new(easetime, Enum.EasingStyle.Sine), {
-							TextTransparency = (i == tabSwitcher and 0.1 or 0.5)
+							TextTransparency = (i == tabSwitcher and 0 or 0.35)
 						}):Play()
 					end
 				end
@@ -5895,7 +5895,7 @@ function MacLib:Window(Settings)
 		notification.Name = "Notification"
 		notification.AnchorPoint = Vector2.new(0.5, 0.5)
 		notification.AutomaticSize = Enum.AutomaticSize.Y
-		notification.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+		notification.BackgroundColor3 = Color3.fromRGB(8, 8, 8)
 		notification.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		notification.BorderSizePixel = 0
 		notification.Position = UDim2.fromScale(0.5, 0.5)
@@ -6182,7 +6182,7 @@ function MacLib:Window(Settings)
 		prompt.Name = "Prompt"
 		prompt.AnchorPoint = Vector2.new(0.5, 0.5)
 		prompt.AutomaticSize = Enum.AutomaticSize.Y
-		prompt.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+		prompt.BackgroundColor3 = Color3.fromRGB(8, 8, 8)
 		prompt.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		prompt.BorderSizePixel = 0
 		prompt.Position = UDim2.fromScale(0.5, 0.5)
