@@ -230,7 +230,7 @@ function MacLib:Window(Settings)
 	if Settings.AcrylicBlur ~= nil then
 		acrylicBlur = Settings.AcrylicBlur
 	else
-		acrylicBlur = true
+		acrylicBlur = false
 	end
 
 	local UICorner1 = Instance.new("UICorner")
@@ -2081,18 +2081,20 @@ function MacLib:Window(Settings)
 				local headerButton, arrowLabel
 				local sectionExpanded = not (Settings.DefaultCollapsed == true)
 				local isCollapsible = Settings.Collapsible == true and Settings.Name ~= nil
+				local headerHeight = isMobile() and 20 or 22
+				local collapsedHeight = sectionUIPadding.PaddingTop.Offset + headerHeight + 6
 
-				local function setElementsVisible(visible)
-					for _, child in ipairs(section:GetChildren()) do
-						if child:IsA("GuiObject") and child ~= headerButton then
-							child.Visible = visible
-						end
-					end
-				end
-
+				-- Collapse by clamping the section height (it clips its children) instead
+				-- of toggling each child's .Visible, so per-element visibility that your
+				-- own code manages (SetVisibility / hidden rows) is left untouched.
 				local function applyExpanded(animate)
 					SectionFunctions.Expanded = sectionExpanded
-					setElementsVisible(sectionExpanded)
+					if sectionExpanded then
+						section.AutomaticSize = Enum.AutomaticSize.Y
+					else
+						section.AutomaticSize = Enum.AutomaticSize.None
+						section.Size = UDim2.new(1, 0, 0, collapsedHeight)
+					end
 					if arrowLabel then
 						if animate then
 							TweenService:Create(arrowLabel, TweenInfo.new(0.2, Enum.EasingStyle.Quint), {
@@ -2168,13 +2170,6 @@ function MacLib:Window(Settings)
 						end)
 					end
 				end
-
-				-- keep newly-added elements hidden while the section is minimized
-				section.ChildAdded:Connect(function(child)
-					if not sectionExpanded and child:IsA("GuiObject") and child ~= headerButton then
-						child.Visible = false
-					end
-				end)
 
 				SectionFunctions.Expanded = sectionExpanded
 				function SectionFunctions:SetExpanded(state)
@@ -6973,7 +6968,7 @@ function MacLib:Demo()
 		DisabledWindowControls = {},
 		ShowUserInfo = true,
 		Keybind = Enum.KeyCode.RightControl,
-		AcrylicBlur = true,
+		AcrylicBlur = false,
 	})
 
 	local globalSettings = {
@@ -7001,18 +6996,6 @@ function MacLib:Demo()
 				})
 			end,
 		}),
-		ShowUserInfo = Window:GlobalSetting({
-			Name = "Show User Info",
-			Default = Window:GetUserInfoState(),
-			Callback = function(bool)
-				Window:SetUserInfoState(bool)
-				Window:Notify({
-					Title = Window.Settings.Title,
-					Description = (bool and "Showing" or "Redacted") .. " User Info",
-					Lifetime = 5
-				})
-			end,
-		})
 	}
 
 	local tabGroups = {
