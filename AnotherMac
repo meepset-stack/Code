@@ -1061,73 +1061,37 @@ function MacLib:Window(Settings)
 	end)
 
 	local dragging_ = false
-	local dragInput
 	local dragStart
 	local startPos
 
-	local function update(input)
-		local delta = input.Position - dragStart
-		base.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-	end
+	-- The whole top bar acts as the drag handle (DragStyle 2 drags from the
+	-- entire window). The old move-arrow hit-box was tiny and dropped the drag
+	-- when the cursor moved off it, so we hide it and drive movement from the
+	-- global InputChanged signal instead.
+	moveIcon.Visible = false
 
-	local function onDragStart(input)
+	local function beginDrag(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			dragging_ = true
-			dragInput = input
 			dragStart = input.Position
 			startPos = base.Position
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging_ = false
+				end
+			end)
 		end
 	end
 
-	local function onDragUpdate(input)
+	local dragTarget = (Settings.DragStyle == 2) and base or topbar
+	dragTarget.InputBegan:Connect(beginDrag)
+
+	UserInputService.InputChanged:Connect(function(input)
 		if dragging_ and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-			dragInput = input
+			local delta = input.Position - dragStart
+			base.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 		end
-	end
-
-	if not Settings.DragStyle or Settings.DragStyle == 1 then
-		interact.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-				onDragStart(input)
-			end
-		end)
-
-		interact.InputChanged:Connect(onDragUpdate)
-
-		UserInputService.InputChanged:Connect(function(input)
-			if input == dragInput and dragging_ then
-				update(input)
-			end
-		end)
-
-		UserInputService.InputEnded:Connect(function(input)
-			if input == dragInput then
-				dragging_ = false
-				dragInput = nil
-			end
-		end)
-	elseif Settings.DragStyle == 2 then
-		base.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-				onDragStart(input)
-			end
-		end)
-
-		base.InputChanged:Connect(onDragUpdate)
-
-		UserInputService.InputChanged:Connect(function(input)
-			if input == dragInput and dragging_ then
-				update(input)
-			end
-		end)
-
-		UserInputService.InputEnded:Connect(function(input)
-			if input == dragInput then
-				dragging_ = false
-				dragInput = nil
-			end
-		end)
-	end
+	end)
 
 	local currentTab = Instance.new("TextLabel")
 	currentTab.Name = "CurrentTab"
