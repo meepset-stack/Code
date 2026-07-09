@@ -836,6 +836,27 @@ function MacLib:Window(Settings)
 
 	informationGroup.Parent = userInfo
 
+	local hinaDiscordButton = Instance.new("TextButton")
+	hinaDiscordButton.Name = "HinaDiscordButton"
+	hinaDiscordButton.Text = ""
+	hinaDiscordButton.AutoButtonColor = false
+	hinaDiscordButton.BackgroundTransparency = 1
+	hinaDiscordButton.BorderSizePixel = 0
+	hinaDiscordButton.Size = UDim2.fromScale(1, 1)
+	hinaDiscordButton.ZIndex = 5
+	hinaDiscordButton.Parent = userInfo
+	hinaDiscordButton.MouseButton1Click:Connect(function()
+		local link = "https://discord.gg/NZHwScVxv3"
+		local cb = setclipboard or toclipboard or writeclipboard or (syn and syn.write_clipboard)
+		local copied = false
+		if cb then pcall(cb, link) copied = true end
+		WindowFunctions:Notify({
+			Title = "Hina Hub",
+			Description = copied and "Copied Discord link to clipboard!" or ("Discord: " .. link),
+			Lifetime = 5
+		})
+	end)
+
 	local userInfoUIPadding = Instance.new("UIPadding")
 	userInfoUIPadding.Name = "UserInfoUIPadding"
 	userInfoUIPadding.PaddingLeft = UDim.new(0, 10)
@@ -6018,23 +6039,20 @@ function MacLib:Window(Settings)
 	end
 
 	local function _SetUserInfoState(State)
-		if State == true then
-			userInfo.Visible = true
-			tabSwitchers.Size = UDim2.new(1, 0, 1, -107)
-			headshot.Image = (isReady and headshotImage) or "rbxassetid://0"
-			username.Text = "@" .. LocalPlayer.Name
-			displayName.Text = LocalPlayer.DisplayName
-		elseif State == false then
+		if State == false then
 			userInfo.Visible = false
 			tabSwitchers.Size = UDim2.new(1, 0, 1, 0)
-		elseif State == "redact" then
+		else
 			userInfo.Visible = true
 			tabSwitchers.Size = UDim2.new(1, 0, 1, -107)
-			headshot.Image = assets.userInfoBlurred
-			local nameLength = #LocalPlayer.Name
-			local displayNameLength = #LocalPlayer.DisplayName
-			username.Text = "@" .. string.rep(".", nameLength)
-			displayName.Text = string.rep(".", displayNameLength)
+			headshot.Image = "rbxassetid://73132811772878"
+			headshot.ScaleType = Enum.ScaleType.Fit
+			local _corner = headshot:FindFirstChildOfClass("UICorner")
+			if _corner then _corner.CornerRadius = UDim.new(0, 0) end
+			local _stroke = headshot:FindFirstChildOfClass("UIStroke")
+			if _stroke then _stroke.Enabled = false end
+			displayName.Text = "Hina Hub"
+			username.Text = "discord.gg/NZHwScVxv3"
 		end
 	end
 
