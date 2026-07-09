@@ -815,18 +815,27 @@ function MacLib:Window(Settings)
 	username.Text = "@" .. LocalPlayer.Name
 	setThemed(username, "TextColor3", "Text")
 	username.TextSize = 12
+	username.TextScaled = true
+	username.TextWrapped = false
 	username.TextTransparency = 0.7
-	username.TextTruncate = Enum.TextTruncate.SplitWord
+	username.TextTruncate = Enum.TextTruncate.None
 	username.TextXAlignment = Enum.TextXAlignment.Left
 	username.TextYAlignment = Enum.TextYAlignment.Top
-	username.AutomaticSize = Enum.AutomaticSize.XY
+	username.AutomaticSize = Enum.AutomaticSize.None
 	username.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	username.BackgroundTransparency = 1
 	username.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	username.BorderSizePixel = 0
 	username.LayoutOrder = 1
 	username.Parent = userAndDisplayFrame
-	username.Size = UDim2.fromScale(1,0)
+	username.Size = UDim2.new(1, 0, 0, 14)
+
+	-- Keeps the Discord link readable but shrinks it to fit narrow window widths
+	local usernameTextSizeConstraint = Instance.new("UITextSizeConstraint")
+	usernameTextSizeConstraint.Name = "UsernameTextSizeConstraint"
+	usernameTextSizeConstraint.MaxTextSize = 12
+	usernameTextSizeConstraint.MinTextSize = 6
+	usernameTextSizeConstraint.Parent = username
 
 	userAndDisplayFrame.Parent = informationGroup
 
