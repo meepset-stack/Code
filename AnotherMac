@@ -1825,7 +1825,7 @@ function MacLib:Window(Settings)
 
 			elementsScrolling.Parent = elements1
 
-			local RESPONSIVE_THRESHOLD = 650
+			local RESPONSIVE_THRESHOLD = 0 -- 0 = always show Left/Right columns (never collapse to one column)
 			local rightSections = {}
 
 			local function updateLayout()
