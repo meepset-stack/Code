@@ -365,10 +365,6 @@ function MacLib:Window(Settings)
 	base.Position = UDim2.fromScale(0.5, 0.5)
 	base.Size = Settings.Size or UDim2.fromOffset(868, 650)
 
-	local baseUIScale = Instance.new("UIScale")
-	baseUIScale.Name = "BaseUIScale"
-	baseUIScale.Parent = base
-
 	local baseUICorner = Instance.new("UICorner")
 	baseUICorner.Name = "BaseUICorner"
 	baseUICorner.CornerRadius = UDim.new(0, 10)
@@ -2537,7 +2533,7 @@ function MacLib:Window(Settings)
 						local sliderNameWidth = sliderName.AbsoluteSize.X
 						local totalWidth = sliderElements.AbsoluteSize.X
 
-						local newBarWidth = (totalWidth - (padding + sliderValueWidth + sliderNameWidth + 20)) / baseUIScale.Scale
+						local newBarWidth = (totalWidth - (padding + sliderValueWidth + sliderNameWidth + 20))
 						sliderBar.Size = UDim2.new(sliderBar.Size.X.Scale, newBarWidth, sliderBar.Size.Y.Scale, sliderBar.Size.Y.Offset)
 					end
 
@@ -2708,7 +2704,7 @@ function MacLib:Window(Settings)
 						local nameWidth = InputName.AbsoluteSize.X
 						local totalWidth = Input.AbsoluteSize.X
 
-						local maxWidth = (totalWidth - nameWidth - 20) / baseUIScale.Scale
+						local maxWidth = (totalWidth - nameWidth - 20)
 						Constraint.MaxSize = Vector2.new(maxWidth, 9e9)
 					end
 
@@ -6047,13 +6043,6 @@ function MacLib:Window(Settings)
 		return base.Size
 	end
 
-	function WindowFunctions:SetScale(Scale)
-		baseUIScale.Scale = Scale
-	end
-	function WindowFunctions:GetScale()
-		return baseUIScale.Scale
-	end
-
 	local ClassParser = {
 		["Toggle"] = {
 			Save = function(Flag, data)
@@ -6320,6 +6309,96 @@ function MacLib:Window(Settings)
 			end
 		end
 	end)
+
+	-- Floating "Hina Hub" button to open/close the UI (draggable)
+	local backgroundFrame = Instance.new("Frame")
+	backgroundFrame.Name = "backgroundFrame"
+	backgroundFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+	backgroundFrame.BackgroundColor3 = Color3.new(1, 1, 1)
+	backgroundFrame.BorderColor3 = Color3.new(1, 1, 1)
+	backgroundFrame.BorderSizePixel = 0
+	backgroundFrame.Position = UDim2.new(0.97, 0, 0.5, 0)
+	backgroundFrame.Size = UDim2.new(0, 80, 0, 80)
+	backgroundFrame.ZIndex = 10
+	backgroundFrame.Parent = macLib
+
+	local backgroundFrameUICorner = Instance.new("UICorner")
+	backgroundFrameUICorner.Parent = backgroundFrame
+
+	local backgroundFrameUIPadding = Instance.new("UIPadding")
+	backgroundFrameUIPadding.PaddingTop = UDim.new(0.1, 0)
+	backgroundFrameUIPadding.PaddingLeft = UDim.new(0.02, 0)
+	backgroundFrameUIPadding.PaddingRight = UDim.new(0.1, 0)
+	backgroundFrameUIPadding.PaddingBottom = UDim.new(0.1, 0)
+	backgroundFrameUIPadding.Parent = backgroundFrame
+
+	local hinaButton = Instance.new("TextButton")
+	hinaButton.Name = "hinaButton"
+	hinaButton.AnchorPoint = Vector2.new(0.46, 0.49)
+	hinaButton.BackgroundColor3 = Color3.fromRGB(146, 19, 125)
+	hinaButton.BorderColor3 = Color3.new(0, 0, 0)
+	hinaButton.BorderSizePixel = 0
+	hinaButton.Position = UDim2.new(0.5, 0, 0.5, 0)
+	hinaButton.Size = UDim2.new(1, 0, 1.1, 0)
+	hinaButton.Font = Enum.Font.Bangers
+	hinaButton.Text = "Hina Hub"
+	hinaButton.TextColor3 = Color3.new(1, 1, 1)
+	hinaButton.TextScaled = false
+	hinaButton.TextSize = 30
+	hinaButton.TextWrapped = true
+	hinaButton.ZIndex = 10
+	hinaButton.Parent = backgroundFrame
+
+	local hinaButtonUICorner = Instance.new("UICorner")
+	hinaButtonUICorner.Parent = hinaButton
+
+	local draggingBackground = false
+	local dragInputBg, dragStartBg, startPosBg
+	local dragMoved = false
+
+	hinaButton.Activated:Connect(function()
+		if dragMoved then return end
+		local state = not WindowFunctions:GetState()
+		WindowFunctions:SetState(state)
+		notifications.Visible = state
+	end)
+
+	hinaButton.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch then
+			draggingBackground = true
+			dragMoved = false
+			dragStartBg = input.Position
+			startPosBg = backgroundFrame.Position
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					draggingBackground = false
+				end
+			end)
+		end
+	end)
+
+	hinaButton.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement
+			or input.UserInputType == Enum.UserInputType.Touch then
+			dragInputBg = input
+		end
+	end)
+
+	UserInputService.InputChanged:Connect(function(input)
+		if draggingBackground and input == dragInputBg then
+			local delta = input.Position - dragStartBg
+			if math.abs(delta.X) > 4 or math.abs(delta.Y) > 4 then
+				dragMoved = true
+			end
+			backgroundFrame.Position = UDim2.new(
+				startPosBg.X.Scale, startPosBg.X.Offset + delta.X,
+				startPosBg.Y.Scale, startPosBg.Y.Offset + delta.Y
+			)
+		end
+	end)
+
 	return WindowFunctions
 end
 
