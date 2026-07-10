@@ -1874,6 +1874,10 @@ function MacLib:Window(Settings)
 
 				if isRight then
 					table.insert(rightSections, section)
+					-- Recompute columns now that a Right section exists. The Tab's initial
+					-- task.defer(updateLayout) can run while #rightSections == 0, which hides
+					-- the right column; without this the layout stays 1-column until a resize.
+					task.defer(updateLayout)
 				end
 
 				local isWide = base.AbsoluteSize.X >= RESPONSIVE_THRESHOLD
