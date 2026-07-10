@@ -3082,20 +3082,30 @@ function MacLib:Window(Settings)
 					dropdownImage.Size = UDim2.fromOffset(14, 14)
 					dropdownImage.Parent = dropdown
 
-					local dropdownFrame = Instance.new("Frame")
+					local dropdownFrame = Instance.new("ScrollingFrame")
 					dropdownFrame.Name = "DropdownFrame"
 					dropdownFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 					dropdownFrame.BackgroundTransparency = 1
 					dropdownFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 					dropdownFrame.BorderSizePixel = 0
 					dropdownFrame.ClipsDescendants = true
-					dropdownFrame.Size = UDim2.fromScale(1, 1)
+					-- Sits below the 38px header and scrolls when the option list is taller
+					-- than the height cap, so long lists are fully reachable (no clipping).
+					dropdownFrame.Position = UDim2.fromOffset(0, 38)
+					dropdownFrame.Size = UDim2.new(1, 0, 1, -38)
 					dropdownFrame.Visible = false
-					dropdownFrame.AutomaticSize = Enum.AutomaticSize.Y
+					dropdownFrame.ScrollingEnabled = true
+					dropdownFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+					dropdownFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+					dropdownFrame.CanvasSize = UDim2.new()
+					dropdownFrame.ScrollBarThickness = 3
+					dropdownFrame.ScrollBarImageTransparency = 0.6
+					dropdownFrame.BottomImage = ""
+					dropdownFrame.TopImage = ""
 
 					local dropdownFrameUIPadding = Instance.new("UIPadding")
 					dropdownFrameUIPadding.Name = "DropdownFrameUIPadding"
-					dropdownFrameUIPadding.PaddingTop = UDim.new(0, 38)
+					dropdownFrameUIPadding.PaddingTop = UDim.new(0, 5)
 					dropdownFrameUIPadding.PaddingBottom = UDim.new(0, 10)
 					dropdownFrameUIPadding.Parent = dropdownFrame
 
@@ -3158,21 +3168,23 @@ function MacLib:Window(Settings)
 					searchBox.BorderSizePixel = 0
 					searchBox.Size = UDim2.fromScale(1, 1)
 
-					local function CalculateDropdownSize()
-						local totalHeight = 0
-						local visibleChildrenCount = 0
-						local padding = dropdownFrameUIPadding.PaddingTop.Offset + dropdownFrameUIPadding.PaddingBottom.Offset
+					local MAX_DROPDOWN_HEIGHT = 250 -- open dropdown never taller than this; the list scrolls past it
+					local DROPDOWN_HEADER = 38
+					local DROPDOWN_ROW = 30
 
+					local function CalculateDropdownSize()
+						local visibleChildrenCount = 0
 						for _, v in pairs(dropdownFrame:GetChildren()) do
 							if not v:IsA("UIComponent") and v.Visible then
-								totalHeight += v.AbsoluteSize.Y
 								visibleChildrenCount += 1
 							end
 						end
 
-						local spacing = dropdownFrameUIListLayout.Padding.Offset * (visibleChildrenCount - 1)
+						local spacing = dropdownFrameUIListLayout.Padding.Offset * math.max(visibleChildrenCount - 1, 0)
+						local innerPadding = dropdownFrameUIPadding.PaddingTop.Offset + dropdownFrameUIPadding.PaddingBottom.Offset
+						local optionsArea = visibleChildrenCount * DROPDOWN_ROW + spacing + innerPadding
 
-						return totalHeight + spacing + padding
+						return math.min(DROPDOWN_HEADER + optionsArea, MAX_DROPDOWN_HEIGHT)
 					end
 
 					local function findOption()
