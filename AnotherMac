@@ -365,6 +365,10 @@ function MacLib:Window(Settings)
 	base.Position = UDim2.fromScale(0.5, 0.5)
 	base.Size = Settings.Size or UDim2.fromOffset(868, 650)
 
+	local baseUIScale = Instance.new("UIScale")
+	baseUIScale.Name = "BaseUIScale"
+	baseUIScale.Parent = base
+
 	local baseUICorner = Instance.new("UICorner")
 	baseUICorner.Name = "BaseUICorner"
 	baseUICorner.CornerRadius = UDim.new(0, 10)
@@ -2542,7 +2546,7 @@ function MacLib:Window(Settings)
 						local sliderNameWidth = sliderName.AbsoluteSize.X
 						local totalWidth = sliderElements.AbsoluteSize.X
 
-						local newBarWidth = (totalWidth - (padding + sliderValueWidth + sliderNameWidth + 20))
+						local newBarWidth = (totalWidth - (padding + sliderValueWidth + sliderNameWidth + 20)) / baseUIScale.Scale
 						sliderBar.Size = UDim2.new(sliderBar.Size.X.Scale, newBarWidth, sliderBar.Size.Y.Scale, sliderBar.Size.Y.Offset)
 					end
 
@@ -2713,7 +2717,7 @@ function MacLib:Window(Settings)
 						local nameWidth = InputName.AbsoluteSize.X
 						local totalWidth = Input.AbsoluteSize.X
 
-						local maxWidth = (totalWidth - nameWidth - 20)
+						local maxWidth = (totalWidth - nameWidth - 20) / baseUIScale.Scale
 						Constraint.MaxSize = Vector2.new(maxWidth, 9e9)
 					end
 
@@ -6050,6 +6054,13 @@ function MacLib:Window(Settings)
 	end
 	function WindowFunctions:GetSize(Size)
 		return base.Size
+	end
+
+	function WindowFunctions:SetScale(Scale)
+		baseUIScale.Scale = Scale
+	end
+	function WindowFunctions:GetScale()
+		return baseUIScale.Scale
 	end
 
 	local ClassParser = {
